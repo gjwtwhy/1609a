@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<center>
+<table>
+    <tr>
+        <td>我是：{$user['username']}</td>
+        <td>余额：{$user['money']}</td>
+        <td><a href="{:url('user/create')}">发红包</a> </td>
+    </tr>
+</table>
+<table>
+    <thead>
+    <tr>
+        <td colspan="5">红包列表</td>
+    </tr>
+    <tr>
+        <td>红包ID</td>
+        <td>用户</td>
+        <td>发放金额</td>
+        <td>发放数量</td>
+        <td>抢红包</td>
+    </tr>
+    </thead>
+    <tbody>
+    {volist name="red" id='vo'}
+    <tr>
+    <td>{$vo.id}</td>
+    <td>{$vo.uid}</td>
+    <td>{$vo.money}</td>
+    <td>{$vo.num}</td>
+    <td></td>
+    </tr>
+    {/volist}
+    </tbody>
+</table>
+</center>
+</body>
+</html>

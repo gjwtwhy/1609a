@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <title>Document</title>
+</head>
+<body>
+<table>
+    <tr>
+        <td>用户名</td>
+        <td><input type="text" id="username"> </td>
+    </tr>
+    <tr>
+        <td>密码</td>
+        <td><input type="password" id="pwd"></td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><input type="button" value="提交" onclick="login()"></td>
+    </tr>
+</table>
+<script>
+    function login() {
+        //非空验证
+        var u = $("#username").val();
+        var p = $("#pwd").val();
+        if(u==''){
+            alert("用户名不能为空");
+            return false;
+        }
+        if(p==''){
+            alert("密码不能为空");
+            return false;
+        }
+        //ajax发送登录数据
+        $.ajax({
+            url:'{:url("login/login")}',
+            type:'post',
+            data:{'username':u,'pwd':p},
+            dataType:'json',
+            success:function (e) {
+                if(e.status==1){
+                    alert("登录成功");
+                    location.href='{:url("user/index")}';
+                } else {
+                    alert(e.msg);
+                    return false;
+                }
+            }
+        })
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <title>Document</title>
+</head>
+<body>
+<center>
+<table border="1" id="tlist">
+    <thead>
+    <tr>
+        <td><input type="checkbox" class="all"></td>
+        <td>ID</td>
+        <td>用户名</td>
+        <td>性别</td>
+        <td>手机</td>
+        <td>邮箱</td>
+        <td>地址</td>
+        <td>加入时间</td>
+        <td>状态</td>
+        <td>操作</td>
+    </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+</table>
+</center>
+<script>
+    //全选 全不选
+    $(".all").click(function () {
+        if($(this).prop('checked')){
+            $(":checkbox").prop("checked",true);
+        } else {
+            $(":checkbox").prop("checked",false);
+        }
+    });
+    //页面加载后执行 获取第一页数据
+    $(function () {
+        ajaxList(1);
+    })
+    //方法：ajax获取第一页数据展示
+    function ajaxList(page) {
+        //1，ajax向后台发送请求获取数据
+        $.ajax({
+            url:'{:url("user/ajaxlist")}',
+            type:'post',
+            data:{'p':page},
+            dataType:'json',
+            success:function (e) {
+               //list写入table
+                var t = '';
+                $.each(e.data.list,function (i,v) {
+                    t += '<tr>';
+
+                    t += '<td><input class="checkuid" type="checkbox" value="'+v.id+'"/></td>';
+                    t += '<td>'+v.id+'</td>';
+                    t += '<td>'+v.username+'</td>';
+                    t += '<td></td>';
+                    t += '<td></td>';
+                    t += '<td></td>';
+                    t += '<td></td>';
+                    t += '<td></td>';
+                    t += '<td></td>';
+                    t += '<td><a href="#" onclick="ajaxdel('+v.id+')">删除</a></td>';
+
+
+                    t += '</tr>';
+                });
+                $("#tlist tbody").html('');
+                $("#tlist tbody").append(t);
+                //分页
+                var phtml = '<tr>';
+                phtml += '<td><input type="button" value="批量删除" onclick="ajaxdelmore()"/></td>   ';
+                phtml += '<td colspan="9" style="text-align: center">';
+
+                //计算前一页
+                var front = 1;
+                if(page>1) {
+                    var front = page-1;
+                }
+                phtml += '<a href="#" onclick="ajaxList('+front+')">上一页</a>   ';
+
+                //循环分页
+                for(var j=1;j<=e.data.totalpage;j++){
+                    phtml += "<a href='#' onclick='ajaxList("+j+")'>"+j+"</a>   ";
+                }
+
+                //计算最后一页
+                var end = e.data.totalpage;
+                if(page<end){
+                    end = page+1;
+                }
+                phtml += '<a href="#" onclick="ajaxList('+end+')">下一页</a>';
+                phtml += '</td></tr>';
+                $("#tlist tbody").append(phtml);
+            }
+        })
+        //2, 渲染页面
+    }
+
+    /**
+     * 单删
+     * @param id
+     */
+    function ajaxdel(id) {
+        $.ajax({
+            url:'{:url("user/ajaxdel")}',
+            type:'post',
+            data:{'id':id},
+            dataType:'json',
+            success:function (e) {
+                if(e.status==1){
+                    ajaxList(1);
+                } else {
+                    alert(e.msg);
+                    return false;
+                }
+            }
+        })
+    }
+
+    /**
+     * 批量删除
+     */
+    function ajaxdelmore() {
+        var ids = [];
+        //获取选中项
+        $(".checkuid").each(function () {
+            if($(this).prop('checked')){
+                ids.push($(this).attr('value'));
+            }
+        });
+
+        //发送ajax请求
+        $.ajax({
+            url:'{:url("user/ajaxdel")}',
+            type:'post',
+            data:{'id':ids},
+            dataType:'json',
+            success:function (e) {
+                if(e.status==1){
+                    ajaxList(1);
+                } else {
+                    alert(e.msg);
+                    return false;
+                }
+            }
+        })
+    }
+</script>
+</body>
+</html>
